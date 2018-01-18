@@ -3,21 +3,32 @@ package main
 import (
   "fmt"
   "net/http"
-  "io/ioutil"
+
+  "github.com/antonholmquist/jason"
 )
 
 func main() {
-  url := "https://developer.github.com/v4/explorer/"
+  //url := "http://weather.livedoor.com/forecast/webservice/json/v1?city=130020"
+  url := "https://api.github.com/graphql"
 
   resp, err := http.Get(url)
 
   if err != nil {
-    fmt.Println(err)
-    return
+    panic(err)
   }
 
   defer resp.Body.Close()
 
-  byteArray, _ := ioutil.ReadAll(resp.Body)
-  fmt.Println(string(byteArray))
+  v, err := jason.NewObjectFromReader(resp.Body)
+
+  if err != nil {
+        panic(err)
+  }
+
+  fmt.Print(v, "\n")
+
+  message, err:= v.GetString("documentation_url")
+  fmt.Print(message)
+  //fmt.Print(v)
+
 }
