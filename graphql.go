@@ -8,10 +8,16 @@ import (
 )
 
 func main() {
-  //url := "http://weather.livedoor.com/forecast/webservice/json/v1?city=130020"
   url := "https://api.github.com/graphql"
 
-  resp, err := http.Get(url)
+  req, err := http.NewRequest("POST", url, nil)
+  req.Header.Set("Authorization", "bearer <your token>")
+
+  if err != nil {
+    panic(err)
+  }
+  client := new(http.Client)
+  resp, err := client.Do(req)
 
   if err != nil {
     panic(err)
@@ -21,14 +27,13 @@ func main() {
 
   v, err := jason.NewObjectFromReader(resp.Body)
 
+  fmt.Print(v, "\n\n")
+
   if err != nil {
-        panic(err)
+    panic(err)
   }
 
-  fmt.Print(v, "\n")
-
-  message, err:= v.GetString("documentation_url")
-  fmt.Print(message)
-  //fmt.Print(v)
+  name, err:= v.GetString("repository")
+  fmt.Print(name)
 
 }
